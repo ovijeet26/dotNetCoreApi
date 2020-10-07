@@ -8,10 +8,13 @@ using WebApiDemo.Models;
 
 namespace WebApiDemo.Controllers
 {
-    [Produces("application/json")]
+    //[Produces("application/json")]
     [Route("api/Products")]
     public class ProductsController : Controller
     {
+        /// <summary>
+        /// Creating and seeding a static list to act as a temporary data store for an active session.
+        /// </summary>
         static List<Product> _products = new List<Product>()
         {
             new Product(){ProductId=0,ProductName="GPU",ProductPrice="20000"},
@@ -21,18 +24,29 @@ namespace WebApiDemo.Controllers
         /// Get all products.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Product> Get()
+        [HttpGet]
+        public IActionResult Get()
         {
-            return _products;
+            return Ok(_products);
+        }
+        /// <summary>
+        /// Get Welcome message.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("LoadWelcomeMessage")]
+        public IActionResult GetWelcomeMessage()
+        {
+            return Ok("Welcome to the Product API..");
         }
         /// <summary>
         /// Post a Product object and add it to the static list.
         /// </summary>
         /// <param name="product"></param>
         [HttpPost]
-        public void Post([FromBody]Product product)
+        public IActionResult Post([FromBody]Product product)
         {
             _products.Add(product);
+            return StatusCode(StatusCodes.Status201Created);
         }
         /// <summary>
         /// Update a Product object in the static List
