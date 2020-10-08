@@ -15,7 +15,7 @@ namespace WebApiDemo.Controllers
         static List<Customer> _customers = new List<Customer>()
         {
             new Customer(){Id=0,Name="Ashmita",Email="ashmita.mukherjee@gmail.com",Phone="9999999999"},
-            new Customer(){Id=0,Name="Ranjana",Email="nytah.sircar@gmail.com",Phone="9831791939"}
+            new Customer(){Id=1,Name="Ranjana",Email="nytah.sircar@gmail.com",Phone="9831791939"}
         };
         /// <summary>
         /// Get all cutomers.
@@ -32,10 +32,14 @@ namespace WebApiDemo.Controllers
         /// <param name="customer"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult AddCustomer(Customer customer)
+        public IActionResult AddCustomer([FromBody]Customer customer)
         {
-            _customers.Add(customer);
-            return StatusCode(StatusCodes.Status201Created);
+            if(ModelState.IsValid)
+            {
+                _customers.Add(customer);
+                return StatusCode(StatusCodes.Status201Created);
+            }
+            return BadRequest(ModelState);
         }
     }
 }
