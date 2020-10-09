@@ -34,12 +34,13 @@ namespace WebApiDemo.Controllers
             }
             return Ok(data);
         }
+
         /// <summary>
         /// Get data via Paging.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
         /// <returns></returns>
-        // GET: api/ProductDb/5
         [HttpGet]
         [Route("GetPage")]
         public IActionResult GetPage(int? pageNumber, int? pageSize)
@@ -54,6 +55,27 @@ namespace WebApiDemo.Controllers
             //Implementing the Skip and Take algorithm.
             var pagedData = data.Skip(currentpageSize*(currentPageNumber - 1)).Take(currentpageSize);
             return Ok(pagedData);
+        }
+
+        /// <summary>
+        /// Search by Product name.
+        /// </summary>
+        /// <param name="beginsWith"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("SearchByName")]
+        public IActionResult SearchByName(string beginsWith)
+        {
+            if(beginsWith==null)
+            {
+                return NotFound("You did not provide any search key. Get your life in an order.");
+            }
+            var searchResult = _dbContext.Products.Where(x=>x.ProductName.StartsWith(beginsWith)).ToList();
+            if (searchResult.Count == 0)
+            {
+                return NotFound("The search resulted in no results. Therefore the result is as disappointing as your life.");
+            }
+            return Ok(searchResult);
         }
         /// <summary>
         /// Get all the data. Implemented sorting. Can provide asc or desc values through query parameter.
