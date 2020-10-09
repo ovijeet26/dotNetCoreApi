@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using WebApiDemo.Data;
 
 namespace WebApiDemo
 {
@@ -25,10 +27,12 @@ namespace WebApiDemo
         {
             //Adding AddXmlSerializerFormatters() for content negotiation through Media Type formatters.
             services.AddMvc().AddXmlSerializerFormatters();
+            //Adding DBContext service
+            services.AddDbContext<ProductDbContext>(option => option.UseSqlServer(@"Data Source=DESKTOP-JF39G45\MSSQLSERVER01;Initial Catalog=ProductsDb;Trusted_Connection=True;"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,ProductDbContext dbContext)
         {
             if (env.IsDevelopment())
             {
@@ -36,6 +40,8 @@ namespace WebApiDemo
             }
 
             app.UseMvc();
+            //Ensures that the DB is created. If it is already created, then it doesnt do anything. If the DB does not exist, then it creates the DB.
+            dbContext.Database.EnsureCreated();
         }
     }
 }
