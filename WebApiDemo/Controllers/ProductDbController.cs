@@ -35,6 +35,27 @@ namespace WebApiDemo.Controllers
             return Ok(data);
         }
         /// <summary>
+        /// Get data via Paging.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        // GET: api/ProductDb/5
+        [HttpGet]
+        [Route("GetPage")]
+        public IActionResult GetPage(int? pageNumber, int? pageSize)
+        {
+            var data = from p in _dbContext.Products.OrderBy(p => p.ProductId) select p;
+            int currentPageNumber = pageNumber ?? 1;
+            int currentpageSize = pageSize ?? 3;
+            if (pageNumber < 1 || pageSize < 1)
+            {
+                return BadRequest("Page number or page size cannot be lesser than 1.");
+            }
+            //Implementing the Skip and Take algorithm.
+            var pagedData = data.Skip(currentpageSize*(currentPageNumber - 1)).Take(currentpageSize);
+            return Ok(pagedData);
+        }
+        /// <summary>
         /// Get all the data. Implemented sorting. Can provide asc or desc values through query parameter.
         /// </summary>
         /// <param name="sort"></param>
